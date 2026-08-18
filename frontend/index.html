@@ -992,7 +992,7 @@
 
     loadButton.addEventListener(
         "click",
-        () => {
+        async () => {
 
             const url =
                 youtubeUrl.value.trim();
@@ -1023,19 +1023,106 @@
 
 
             /*
-                We save the source URL.
-
-                Later the backend will receive
-                this value and process the video.
+                Get the current trim settings.
             */
 
-            sessionStorage.setItem(
-                "sourceUrl",
-                url
-            );
+            const start = 0;
+            const end = 30;
 
 
-            showScreen(editorScreen);
+            /*
+                Show loading state.
+            */
+
+            const originalText =
+                loadButton.textContent;
+
+            loadButton.textContent =
+                "Connecting...";
+
+            loadButton.disabled = true;
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "http://localhost:8000/api/prepare",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                url: url,
+                                start: start,
+                                end: end
+                            })
+                        }
+                    );
+
+
+                const result =
+                    await response.json();
+
+
+                if (!result.success) {
+
+                    alert(
+                        result.error ||
+                        "Something went wrong."
+                    );
+
+                    return;
+                }
+
+
+                /*
+                    Save the source information.
+                */
+
+                sessionStorage.setItem(
+                    "sourceUrl",
+                    result.url
+                );
+
+                sessionStorage.setItem(
+                    "clipStart",
+                    result.start
+                );
+
+                sessionStorage.setItem(
+                    "clipEnd",
+                    result.end
+                );
+
+
+                /*
+                    Move to editor.
+                */
+
+                showScreen(editorScreen);
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Could not connect to the Clipper server."
+                );
+
+            } finally {
+
+                loadButton.textContent =
+                    originalText;
+
+                loadButton.disabled = false;
+
+            }
 
         }
     );
