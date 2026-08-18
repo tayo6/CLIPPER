@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>Clipper</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --black: #000;
+            --white: #fff;
+            --gray-50: #f7f7f7;
+            --gray-100: #ededed;
+            --gray-200: #d9d9d9;
+            --gray-400: #999;
+            --gray-500: #6b6b6b;
+            --gray-700: #333;
+        }
+
+        body {
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Helvetica,
+                Arial,
+                sans-serif;
+
+            background: var(--white);
+            color: var(--black);
+
+            min-height: 100vh;
+
+            -webkit-font-smoothing: antialiased;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        /* ==============================
+           APP
+        ============================== */
+
+        .app {
+            min-height: 100vh;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+
+        /* ==============================
+           HEADER
+        ============================== */
+
+        .header {
+            height: 68px;
+
+            padding: 0 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-mark {
+            width: 30px;
+            height: 30px;
+
+            background: #000;
+            color: #fff;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .brand-name {
+            font-size: 18px;
+            font-weight: 650;
+            letter-spacing: -0.4px;
+        }
+
+        .back-button {
+            border: none;
+            background: transparent;
+
+            font-size: 15px;
+            font-weight: 600;
+
+            padding: 10px;
+        }
+
+
+        /* ==============================
+           SCREENS
+        ============================== */
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+
+        /* ==============================
+           HOME
+        ============================== */
+
+        .home {
+            padding: 42px 18px 60px;
+        }
+
+        .eyebrow {
+            color: var(--gray-500);
+
+            font-size: 12px;
+            font-weight: 650;
+
+            letter-spacing: 0.5px;
+
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: clamp(40px, 11vw, 64px);
+            line-height: .96;
+
+            letter-spacing: -3px;
+
+            margin-bottom: 18px;
+        }
+
+        .description {
+            color: var(--gray-500);
+
+            font-size: 16px;
+            line-height: 1.5;
+
+            max-width: 520px;
+
+            margin-bottom: 38px;
+        }
+
+        .section-label {
+            font-size: 14px;
+            font-weight: 650;
+
+            margin-bottom: 10px;
+        }
+
+        .source-box {
+            border: 1px solid var(--gray-200);
+
+            padding: 7px;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        .source-input {
+            height: 52px;
+
+            border: none;
+            outline: none;
+
+            padding: 0 12px;
+
+            font-size: 16px;
+        }
+
+        .source-input:focus {
+            background: var(--gray-50);
+        }
+
+        .load-button {
+            height: 52px;
+
+            border: none;
+
+            background: #000;
+            color: #fff;
+
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .load-button:active {
+            transform: scale(.99);
+        }
+
+        .upload {
+            display: block;
+
+            width: fit-content;
+
+            margin: 13px auto 0;
+
+            border: none;
+            background: transparent;
+
+            text-decoration: underline;
+            text-underline-offset: 4px;
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+
+        /* ==============================
+           EDITOR
+        ============================== */
+
+        .editor {
+            padding: 22px 18px 50px;
+        }
+
+        .editor-header {
+            margin-bottom: 20px;
+        }
+
+        .editor-title {
+            font-size: 28px;
+            line-height: 1;
+
+            letter-spacing: -1px;
+
+            margin-bottom: 8px;
+        }
+
+        .editor-subtitle {
+            color: var(--gray-500);
+
+            font-size: 14px;
+        }
+
+
+        /* ==============================
+           VIDEO
+        ============================== */
+
+        .video-container {
+            width: 100%;
+
+            background: #000;
+
+            aspect-ratio: 16 / 9;
+
+            position: relative;
+
+            overflow: hidden;
+        }
+
+        .video-placeholder {
+            position: absolute;
+            inset: 0;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            color: #fff;
+
+            text-align: center;
+
+            padding: 20px;
+        }
+
+        .play-button {
+            width: 58px;
+            height: 58px;
+
+            border-radius: 50%;
+
+            border: 1px solid rgba(255,255,255,.4);
+
+            background: rgba(255,255,255,.12);
+
+            color: white;
+
+            font-size: 21px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 15px;
+        }
+
+        .video-placeholder p {
+            font-size: 13px;
+            color: #ccc;
+        }
+
+
+        /* ==============================
+           TRIM INFO
+        ============================== */
+
+        .trim-info {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+
+            margin-top: 28px;
+            margin-bottom: 15px;
+        }
+
+        .trim-label {
+            font-size: 13px;
+            color: var(--gray-500);
+
+            margin-bottom: 4px;
+        }
+
+        .duration {
+            font-size: 28px;
+            font-weight: 650;
+
+            letter-spacing: -1px;
+        }
+
+        .limit {
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+
+
+        /* ==============================
+           TIMELINE
+        ============================== */
+
+        .timeline {
+            height: 72px;
+
+            position: relative;
+
+            background:
+                repeating-linear-gradient(
+                    90deg,
+                    #dedede 0px,
+                    #dedede 2px,
+                    transparent 2px,
+                    transparent 12px
+                );
+
+            border: 1px solid var(--gray-200);
+
+            overflow: hidden;
+        }
+
+        .selection {
+            position: absolute;
+
+            top: 0;
+            bottom: 0;
+
+            left: 0;
+            width: 100%;
+
+            background: rgba(0,0,0,.08);
+
+            border-left: 4px solid #000;
+            border-right: 4px solid #000;
+
+            pointer-events: none;
+        }
+
+        .handle {
+            position: absolute;
+
+            top: 0;
+            bottom: 0;
+
+            width: 24px;
+
+            background: #000;
+
+            z-index: 3;
+        }
+
+        .handle-left {
+            left: -1px;
+        }
+
+        .handle-right {
+            right: -1px;
+        }
+
+        .handle::after {
+            content: "";
+
+            position: absolute;
+
+            width: 4px;
+            height: 24px;
+
+            background: #fff;
+
+            top: 50%;
+            left: 50%;
+
+            transform: translate(-50%, -50%);
+        }
+
+
+        /* ==============================
+           TIME INPUTS
+        ============================== */
+
+        .time-controls {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 10px;
+
+            margin-top: 14px;
+        }
+
+        .time-field {
+            border: 1px solid var(--gray-200);
+
+            padding: 10px 12px;
+        }
+
+        .time-field label {
+            display: block;
+
+            font-size: 11px;
+
+            color: var(--gray-500);
+
+            margin-bottom: 5px;
+        }
+
+        .time-field input {
+            width: 100%;
+
+            border: none;
+            outline: none;
+
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+
+        /* ==============================
+           WARNING
+        ============================== */
+
+        .warning {
+            display: none;
+
+            background: var(--gray-50);
+
+            padding: 12px;
+
+            margin-top: 12px;
+
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .warning.show {
+            display: block;
+        }
+
+
+        /* ==============================
+           CONTINUE
+        ============================== */
+
+        .continue-button {
+            width: 100%;
+
+            height: 56px;
+
+            margin-top: 28px;
+
+            border: none;
+
+            background: #000;
+            color: #fff;
+
+            font-size: 16px;
+            font-weight: 650;
+        }
+
+        .continue-button:active {
+            transform: scale(.99);
+        }
+
+
+        /* ==============================
+           NEXT STEP PLACEHOLDER
+        ============================== */
+
+        .next-screen {
+            padding: 40px 18px;
+        }
+
+        .next-screen h2 {
+            font-size: 34px;
+
+            letter-spacing: -1.5px;
+
+            margin-bottom: 12px;
+        }
+
+        .next-screen p {
+            color: var(--gray-500);
+
+            line-height: 1.5;
+        }
+
+
+        /* ==============================
+           DESKTOP
+        ============================== */
+
+        @media (min-width: 700px) {
+
+            .header {
+                padding: 0 36px;
+            }
+
+            .home {
+                padding: 70px 36px;
+            }
+
+            .editor {
+                padding: 45px 36px 70px;
+
+                max-width: 850px;
+                margin: auto;
+            }
+
+            .source-box {
+                max-width: 760px;
+
+                display: grid;
+
+                grid-template-columns: 1fr 150px;
+            }
+
+            .upload {
+                margin-left: 0;
+            }
+
+            .video-container {
+                aspect-ratio: 16 / 9;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<div class="app">
+
+    <!-- =====================================
+         HEADER
+    ====================================== -->
+
+    <header class="header">
+
+        <button
+            id="backButton"
+            class="back-button"
+            style="display:none;"
+        >
+            ← Back
+        </button>
+
+        <div class="brand">
+
+            <div class="brand-mark">
+                C
+            </div>
+
+            <div class="brand-name">
+                Clipper
+            </div>
+
+        </div>
+
+        <div style="width:70px;"></div>
+
+    </header>
+
+
+    <!-- =====================================
+         HOME SCREEN
+    ====================================== -->
+
+    <section
+        id="homeScreen"
+        class="screen active"
+    >
+
+        <main class="home">
+
+            <div class="eyebrow">
+                SHORT FORM VIDEO
+            </div>
+
+            <h1>
+                Turn long videos<br>
+                into clips.
+            </h1>
+
+            <p class="description">
+                Choose a moment from a long video
+                and turn it into a short-form clip.
+            </p>
+
+
+            <div class="section-label">
+                Video source
+            </div>
+
+
+            <div class="source-box">
+
+                <input
+                    id="youtubeUrl"
+                    class="source-input"
+                    type="url"
+                    inputmode="url"
+                    autocomplete="off"
+                    placeholder="Paste YouTube link"
+                >
+
+                <button
+                    id="loadButton"
+                    class="load-button"
+                    type="button"
+                >
+                    Load video
+                </button>
+
+            </div>
+
+
+            <button
+                id="uploadButton"
+                class="upload"
+                type="button"
+            >
+                Or upload a video from your device
+            </button>
+
+            <input
+                id="fileInput"
+                type="file"
+                accept="video/*"
+                hidden
+            >
+
+        </main>
+
+    </section>
+
+
+
+    <!-- =====================================
+         EDITOR SCREEN
+    ====================================== -->
+
+    <section
+        id="editorScreen"
+        class="screen"
+    >
+
+        <main class="editor">
+
+            <div class="editor-header">
+
+                <h2 class="editor-title">
+                    Trim your clip
+                </h2>
+
+                <p class="editor-subtitle">
+                    Choose up to 90 seconds.
+                </p>
+
+            </div>
+
+
+            <!-- VIDEO -->
+
+            <div class="video-container">
+
+                <div class="video-placeholder">
+
+                    <div class="play-button">
+                        ▶
+                    </div>
+
+                    <p>
+                        Video preview
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- TRIM INFORMATION -->
+
+            <div class="trim-info">
+
+                <div>
+
+                    <div class="trim-label">
+                        Clip duration
+                    </div>
+
+                    <div
+                        id="durationDisplay"
+                        class="duration"
+                    >
+                        00:30
+                    </div>
+
+                </div>
+
+                <div class="limit">
+                    Maximum 01:30
+                </div>
+
+            </div>
+
+
+            <!-- TIMELINE -->
+
+            <div class="timeline">
+
+                <div
+                    id="selection"
+                    class="selection"
+                >
+
+                    <div
+                        id="leftHandle"
+                        class="handle handle-left"
+                    ></div>
+
+                    <div
+                        id="rightHandle"
+                        class="handle handle-right"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- TIME FIELDS -->
+
+            <div class="time-controls">
+
+                <div class="time-field">
+
+                    <label>
+                        START
+                    </label>
+
+                    <input
+                        id="startTime"
+                        type="text"
+                        value="00:00"
+                        inputmode="numeric"
+                    >
+
+                </div>
+
+
+                <div class="time-field">
+
+                    <label>
+                        END
+                    </label>
+
+                    <input
+                        id="endTime"
+                        type="text"
+                        value="00:30"
+                        inputmode="numeric"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="warning"
+                class="warning"
+            >
+                Your clip cannot be longer than 90 seconds.
+            </div>
+
+
+            <button
+                id="continueButton"
+                class="continue-button"
+                type="button"
+            >
+                Continue
+            </button>
+
+        </main>
+
+    </section>
+
+
+
+    <!-- =====================================
+         LAYOUT SCREEN
+    ====================================== -->
+
+    <section
+        id="layoutScreen"
+        class="screen"
+    >
+
+        <main class="next-screen">
+
+            <h2>
+                Clip layout
+            </h2>
+
+            <p>
+                This is where we'll choose the video
+                position, captions and text layout.
+            </p>
+
+        </main>
+
+    </section>
+
+</div>
+
+
+
+<script>
+
+    /* ======================================
+       ELEMENTS
+    ====================================== */
+
+    const homeScreen =
+        document.getElementById("homeScreen");
+
+    const editorScreen =
+        document.getElementById("editorScreen");
+
+    const layoutScreen =
+        document.getElementById("layoutScreen");
+
+    const youtubeUrl =
+        document.getElementById("youtubeUrl");
+
+    const loadButton =
+        document.getElementById("loadButton");
+
+    const uploadButton =
+        document.getElementById("uploadButton");
+
+    const fileInput =
+        document.getElementById("fileInput");
+
+    const continueButton =
+        document.getElementById("continueButton");
+
+    const backButton =
+        document.getElementById("backButton");
+
+    const startTime =
+        document.getElementById("startTime");
+
+    const endTime =
+        document.getElementById("endTime");
+
+    const durationDisplay =
+        document.getElementById("durationDisplay");
+
+    const warning =
+        document.getElementById("warning");
+
+    const selection =
+        document.getElementById("selection");
+
+    const leftHandle =
+        document.getElementById("leftHandle");
+
+    const rightHandle =
+        document.getElementById("rightHandle");
+
+
+    /* ======================================
+       SCREEN CONTROL
+    ====================================== */
+
+    function showScreen(screen) {
+
+        homeScreen.classList.remove("active");
+        editorScreen.classList.remove("active");
+        layoutScreen.classList.remove("active");
+
+        screen.classList.add("active");
+
+        if (screen === homeScreen) {
+            backButton.style.display = "none";
+        } else {
+            backButton.style.display = "block";
+        }
+
+        window.scrollTo({
+            top: 0,
+            behavior: "instant"
+        });
+
+    }
+
+
+    /* ======================================
+       YOUTUBE URL VALIDATION
+    ====================================== */
+
+    function isYouTubeUrl(url) {
+
+        try {
+
+            const parsed =
+                new URL(url);
+
+            return (
+                parsed.hostname.includes("youtube.com") ||
+                parsed.hostname.includes("youtu.be")
+            );
+
+        } catch {
+
+            return false;
+
+        }
+
+    }
+
+
+    /* ======================================
+       LOAD VIDEO
+    ====================================== */
+
+    loadButton.addEventListener(
+        "click",
+        () => {
+
+            const url =
+                youtubeUrl.value.trim();
+
+
+            if (!url) {
+
+                alert(
+                    "Please paste a YouTube link first."
+                );
+
+                youtubeUrl.focus();
+
+                return;
+            }
+
+
+            if (!isYouTubeUrl(url)) {
+
+                alert(
+                    "Please enter a valid YouTube link."
+                );
+
+                youtubeUrl.focus();
+
+                return;
+            }
+
+
+            /*
+                We save the source URL.
+
+                Later the backend will receive
+                this value and process the video.
+            */
+
+            sessionStorage.setItem(
+                "sourceUrl",
+                url
+            );
+
+
+            showScreen(editorScreen);
+
+        }
+    );
+
+
+    /* ======================================
+       ENTER KEY
+    ====================================== */
+
+    youtubeUrl.addEventListener(
+        "keydown",
+        event => {
+
+            if (event.key === "Enter") {
+                loadButton.click();
+            }
+
+        }
+    );
+
+
+    /* ======================================
+       DEVICE UPLOAD
+    ====================================== */
+
+    uploadButton.addEventListener(
+        "click",
+        () => {
+
+            fileInput.click();
+
+        }
+    );
+
+
+    fileInput.addEventListener(
+        "change",
+        () => {
+
+            const file =
+                fileInput.files[0];
+
+            if (!file) return;
+
+
+            /*
+                For an uploaded video we can
+                eventually process the file
+                directly on the backend.
+
+                For now we open the editor.
+            */
+
+            sessionStorage.removeItem(
+                "sourceUrl"
+            );
+
+            sessionStorage.setItem(
+                "uploadedFileName",
+                file.name
+            );
+
+
+            showScreen(editorScreen);
+
+        }
+    );
+
+
+    /* ======================================
+       TIME UTILITIES
+    ====================================== */
+
+    function timeToSeconds(value) {
+
+        const parts =
+            value.split(":");
+
+        if (parts.length !== 2) {
+            return 0;
+        }
+
+        const minutes =
+            parseInt(parts[0]) || 0;
+
+        const seconds =
+            parseInt(parts[1]) || 0;
+
+        return (
+            minutes * 60 +
+            seconds
+        );
+
+    }
+
+
+    function secondsToTime(totalSeconds) {
+
+        totalSeconds =
+            Math.max(
+                0,
+                Math.floor(totalSeconds)
+            );
+
+        const minutes =
+            Math.floor(
+                totalSeconds / 60
+            );
+
+        const seconds =
+            totalSeconds % 60;
+
+
+        return (
+            String(minutes).padStart(2, "0") +
+            ":" +
+            String(seconds).padStart(2, "0")
+        );
+
+    }
+
+
+    /* ======================================
+       UPDATE TRIM
+    ====================================== */
+
+    function updateTrim() {
+
+        let start =
+            timeToSeconds(
+                startTime.value
+            );
+
+        let end =
+            timeToSeconds(
+                endTime.value
+            );
+
+
+        if (start < 0) {
+            start = 0;
+        }
+
+
+        if (end < start) {
+            end = start;
+        }
+
+
+        let duration =
+            end - start;
+
+
+        if (duration > 90) {
+
+            end =
+                start + 90;
+
+            duration = 90;
+
+            endTime.value =
+                secondsToTime(end);
+
+            warning.classList.add("show");
+
+        } else {
+
+            warning.classList.remove("show");
+
+        }
+
+
+        durationDisplay.textContent =
+            secondsToTime(duration);
+
+
+        /*
+            This is only a visual timeline
+            for now.
+
+            Later it will use the actual
+            duration of the source video.
+        */
+
+        const timelineDuration = 90;
+
+        const leftPercent =
+            Math.min(
+                100,
+                (start / timelineDuration) * 100
+            );
+
+        const rightPercent =
+            Math.min(
+                100,
+                (end / timelineDuration) * 100
+            );
+
+
+        selection.style.left =
+            leftPercent + "%";
+
+        selection.style.width =
+            Math.max(
+                0,
+                rightPercent - leftPercent
+            ) + "%";
+
+    }
+
+
+    startTime.addEventListener(
+        "change",
+        updateTrim
+    );
+
+    endTime.addEventListener(
+        "change",
+        updateTrim
+    );
+
+
+    /* ======================================
+       CONTINUE
+    ====================================== */
+
+    continueButton.addEventListener(
+        "click",
+        () => {
+
+            const start =
+                timeToSeconds(
+                    startTime.value
+                );
+
+            const end =
+                timeToSeconds(
+                    endTime.value
+                );
+
+            const duration =
+                end - start;
+
+
+            if (duration <= 0) {
+
+                alert(
+                    "Please select a valid clip."
+                );
+
+                return;
+            }
+
+
+            if (duration > 90) {
+
+                warning.classList.add("show");
+
+                return;
+            }
+
+
+            sessionStorage.setItem(
+                "clipStart",
+                start
+            );
+
+            sessionStorage.setItem(
+                "clipEnd",
+                end
+            );
+
+
+            showScreen(layoutScreen);
+
+        }
+    );
+
+
+    /* ======================================
+       BACK
+    ====================================== */
+
+    backButton.addEventListener(
+        "click",
+        () => {
+
+            if (
+                layoutScreen.classList.contains(
+                    "active"
+                )
+            ) {
+
+                showScreen(
+                    editorScreen
+                );
+
+                return;
+            }
+
+
+            if (
+                editorScreen.classList.contains(
+                    "active"
+                )
+            ) {
+
+                showScreen(
+                    homeScreen
+                );
+
+                return;
+            }
+
+        }
+    );
+
+
+    /* ======================================
+       INITIALISE
+    ====================================== */
+
+    updateTrim();
+
+</script>
+
+</body>
+</html>
