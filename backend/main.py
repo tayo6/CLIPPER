@@ -1,3 +1,4 @@
+import subprocess
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -66,3 +67,64 @@ def prepare_video(data: dict):
         "end": end,
         "duration": duration
     }
+
+
+@app.post("/api/trim")
+def trim_video(data: dict):
+
+    input_file = "backend/temp/test.mp4"
+    output_file = "backend/temp/clip-from-api.mp4"
+
+    start = float(data.get("start", 0))
+    end = float(data.get("end", 0))
+
+    duration = end - start
+
+    if duration <= 0:
+        return {
+            "success": False,
+            "error": "End time must be greater than start time."
+        }
+
+    if duration > 90:
+        return {
+            "success": False,
+            "error": "Maximum clip length is 90 seconds."
+        }
+
+    command = [
+        "ffmpeg",
+        "-y",
+        "-ss", str(start),
+        "-i", input_file,
+        "-t", str(duration),
+        "-c:v", "libx264",
+        "-c:a", "aac",
+        output_file
+    ]
+
+    try:
+
+        subprocess.run(
+            command,
+            check=True,
+            capture_output=True,
+            text=True
+        )
+
+        return {
+            "success": True,
+            "message": "Clip created successfully.",
+            "file": output_file,
+            "start": start,
+            "end": end,
+            "duration": duration
+        }
+
+    except subprocess.CalledProcessError as error:
+
+        return {
+            "success": False,
+            "error": "FFmpeg failed.",
+            "details": error.stderr[-1000:]
+        }
