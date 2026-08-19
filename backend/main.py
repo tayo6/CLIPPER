@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="Clipper API",
-    version="1.0.0"
+    version="1.0.1"
 )
 
 # Allow our frontend to communicate with the backend.
