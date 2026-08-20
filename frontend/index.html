@@ -883,6 +883,15 @@
 <script>
 
     /* ======================================
+       🔗 YOUR API URL
+    ====================================== */
+    // This is the address of your backend server.
+    // If you ever delete your Codespace and make a new one, 
+    // you will just need to update this link!
+    const API_URL = "https://vigilant-space-barnacle-jwp6g6wx4gqh5w7j-8000.app.github.dev";
+
+
+    /* ======================================
        ELEMENTS
     ====================================== */
 
@@ -933,6 +942,9 @@
 
     const rightHandle =
         document.getElementById("rightHandle");
+
+    // 🎒 Our "backpack" to hold the uploaded video file
+    let uploadedFile = null;
 
 
     /* ======================================
@@ -987,7 +999,7 @@
 
 
     /* ======================================
-       LOAD VIDEO
+       LOAD VIDEO (YouTube)
     ====================================== */
 
     loadButton.addEventListener(
@@ -1022,17 +1034,8 @@
             }
 
 
-            /*
-                Get the current trim settings.
-            */
-
             const start = 0;
             const end = 30;
-
-
-            /*
-                Show loading state.
-            */
 
             const originalText =
                 loadButton.textContent;
@@ -1045,9 +1048,10 @@
 
             try {
 
+                // 🔗 Now using your real API_URL instead of Replit!
                 const response =
                     await fetch(
-                        "https://b422655c-7510-4338-9131-4f0a780143f9-00-x7x7ezoz1yjb.picard.replit.dev/api/prepare",
+                        `${API_URL}/api/prepare`,
                         {
                             method: "POST",
 
@@ -1080,10 +1084,6 @@
                 }
 
 
-                /*
-                    Save the source information.
-                */
-
                 sessionStorage.setItem(
                     "sourceUrl",
                     result.url
@@ -1099,10 +1099,8 @@
                     result.end
                 );
 
-
-                /*
-                    Move to editor.
-                */
+                // Clear uploaded file if they switch to YouTube
+                uploadedFile = null;
 
                 showScreen(editorScreen);
 
@@ -1167,14 +1165,8 @@
 
             if (!file) return;
 
-
-            /*
-                For an uploaded video we can
-                eventually process the file
-                directly on the backend.
-
-                For now we open the editor.
-            */
+            // 🎒 Put the file in our backpack!
+            uploadedFile = file;
 
             sessionStorage.removeItem(
                 "sourceUrl"
@@ -1299,14 +1291,6 @@
             secondsToTime(duration);
 
 
-        /*
-            This is only a visual timeline
-            for now.
-
-            Later it will use the actual
-            duration of the source video.
-        */
-
         const timelineDuration = 90;
 
         const leftPercent =
@@ -1346,12 +1330,12 @@
 
 
     /* ======================================
-       CONTINUE
+       CONTINUE (Send to Backend)
     ====================================== */
 
     continueButton.addEventListener(
         "click",
-        () => {
+        async () => {
 
             const start =
                 timeToSeconds(
@@ -1384,7 +1368,45 @@
                 return;
             }
 
+            // 🚀 NEW CODE: If we have an uploaded file, send it to the backend!
+            if (uploadedFile) {
+                continueButton.textContent = "Creating clip...";
+                continueButton.disabled = true;
 
+                try {
+                    // This is the virtual form (multipart/form-data)!
+                    const formData = new FormData();
+                    formData.append("video", uploadedFile);
+                    formData.append("start", start);
+                    formData.append("end", end);
+
+                    const response = await fetch(`${API_URL}/api/trim`, {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert("Clip created successfully! Downloading now...");
+                        // Go to the download page to get the video
+                        window.location.href = `${API_URL}/api/download`;
+                    } else {
+                        alert("Error: " + (result.error || "Unknown error"));
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert("Could not connect to the server.");
+                } finally {
+                    continueButton.textContent = "Continue";
+                    continueButton.disabled = false;
+                }
+                
+                return; // Stop here, don't go to the layout screen yet
+            }
+
+
+            // Old code for YouTube URL (if no file was uploaded)
             sessionStorage.setItem(
                 "clipStart",
                 start
