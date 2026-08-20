@@ -22,7 +22,7 @@ app.add_middleware(
 def home():
     return {
         "status": "online",
-        "message": "Clipper backend is running"
+        "message": "Ad3, new code is running"
     }
 
 
@@ -97,6 +97,22 @@ async def trim_video(
         }
 
     try:
+        video_data = await video.read()
+
+        with open(input_file, "wb") as file:
+            file.write(video_data)
+
+        command = [
+            "ffmpeg",
+            "-y",
+            "-ss", str(start),
+            "-i", input_file,
+            "-t", str(duration),
+            "-c:v", "libx264",
+            "-c:a", "aac",
+            output_file
+        ]
+
         video_data = await video.read()
 
         with open(input_file, "wb") as file:
