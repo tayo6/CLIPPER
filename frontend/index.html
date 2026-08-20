@@ -525,6 +525,123 @@
 
 
         /* ==============================
+           STYLE PICKER
+        ============================== */
+
+        .picker,
+        .mix {
+            padding: 22px 18px 50px;
+        }
+
+        .screen-title {
+            font-size: 28px;
+            line-height: 1;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+
+        .screen-subtitle {
+            color: var(--gray-500);
+            font-size: 14px;
+            margin-bottom: 22px;
+        }
+
+        .style-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .style-card {
+            border: 1px solid var(--gray-200);
+            background: #fff;
+            padding: 16px 12px;
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+            text-align: left;
+        }
+
+        .style-card .icon {
+            font-size: 22px;
+        }
+
+        .style-card .name {
+            font-weight: 650;
+            font-size: 14px;
+        }
+
+        .style-card .tag {
+            font-size: 11px;
+            color: var(--gray-500);
+        }
+
+        .style-card.disabled {
+            opacity: .45;
+        }
+
+
+        /* ==============================
+           MIX SCREEN
+        ============================== */
+
+        .preview-box {
+            width: 100%;
+            background: #000;
+            aspect-ratio: 9 / 16;
+            max-height: 62vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-box video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .vol-row {
+            display: grid;
+            grid-template-columns: 90px 1fr;
+            align-items: center;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .vol-row label {
+            font-size: 12px;
+            font-weight: 650;
+            color: var(--gray-500);
+        }
+
+        .vol-row input[type="range"] {
+            width: 100%;
+        }
+
+        .mix-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .ghost-button {
+            height: 52px;
+            border: 1px solid var(--gray-200);
+            background: #fff;
+            font-weight: 600;
+            font-size: 13px;
+            padding: 0 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+
+        /* ==============================
            NEXT STEP PLACEHOLDER
         ============================== */
 
@@ -582,6 +699,14 @@
 
             .video-container {
                 aspect-ratio: 16 / 9;
+            }
+
+            .picker,
+            .mix {
+                padding: 45px 36px 70px;
+
+                max-width: 850px;
+                margin: auto;
             }
 
         }
@@ -853,6 +978,171 @@
 
 
     <!-- =====================================
+         STYLE PICKER SCREEN
+    ====================================== -->
+
+    <section
+        id="pickerScreen"
+        class="screen"
+    >
+
+        <main class="picker">
+
+            <h2 class="screen-title">
+                Pick your style
+            </h2>
+
+            <p class="screen-subtitle">
+                Choose how your clip should look.
+            </p>
+
+            <div class="style-grid">
+
+                <button
+                    id="styleFullscreen"
+                    class="style-card"
+                    type="button"
+                >
+                    <span class="icon">🎧</span>
+                    <span class="name">Fullscreen + Audio</span>
+                    <span class="tag">Add your own sound</span>
+                </button>
+
+                <button
+                    class="style-card disabled"
+                    type="button"
+                >
+                    <span class="icon">🎬</span>
+                    <span class="name">Letterbox + Text</span>
+                    <span class="tag">Coming soon</span>
+                </button>
+
+                <button
+                    class="style-card disabled"
+                    type="button"
+                >
+                    <span class="icon">📱</span>
+                    <span class="name">Double Screen</span>
+                    <span class="tag">Coming soon</span>
+                </button>
+
+                <button
+                    class="style-card disabled"
+                    type="button"
+                >
+                    <span class="icon">🔀</span>
+                    <span class="name">Transition</span>
+                    <span class="tag">Coming soon</span>
+                </button>
+
+            </div>
+
+        </main>
+
+    </section>
+
+
+
+    <!-- =====================================
+         MIX SCREEN (STYLE A)
+    ====================================== -->
+
+    <section
+        id="mixScreen"
+        class="screen"
+    >
+
+        <main class="mix">
+
+            <h2 class="screen-title">
+                Fullscreen + Audio
+            </h2>
+
+            <p class="screen-subtitle">
+                Preview the mix, then create your clip.
+            </p>
+
+
+            <div
+                id="previewBox"
+                class="preview-box"
+            >
+                <video
+                    id="previewVideo"
+                    controls
+                    playsinline
+                ></video>
+            </div>
+
+
+            <div class="vol-row">
+                <label>VIDEO VOL</label>
+                <input
+                    id="videoVolume"
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value="1"
+                >
+            </div>
+
+            <div class="vol-row">
+                <label>MUSIC VOL</label>
+                <input
+                    id="audioVolume"
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value="0.8"
+                >
+            </div>
+
+
+            <div class="mix-actions">
+
+                <button
+                    id="importAudioButton"
+                    class="ghost-button"
+                    type="button"
+                >
+                    Import audio
+                </button>
+
+                <button
+                    id="fullscreenButton"
+                    class="ghost-button"
+                    type="button"
+                >
+                    Fullscreen
+                </button>
+
+            </div>
+
+            <input
+                id="audioInput"
+                type="file"
+                accept="audio/*"
+                hidden
+            >
+
+
+            <button
+                id="createFinalButton"
+                class="continue-button"
+                type="button"
+            >
+                Create final clip
+            </button>
+
+        </main>
+
+    </section>
+
+
+
+    <!-- =====================================
          LAYOUT SCREEN
     ====================================== -->
 
@@ -885,9 +1175,7 @@
     /* ======================================
        🔗 YOUR API URL
     ====================================== */
-    // This is the address of your backend server.
-    // If you ever delete your Codespace and make a new one, 
-    // you will just need to update this link!
+
     const API_URL = "https://vigilant-space-barnacle-jwp6g6wx4gqh5w7j-8000.app.github.dev";
 
 
@@ -900,6 +1188,12 @@
 
     const editorScreen =
         document.getElementById("editorScreen");
+
+    const pickerScreen =
+        document.getElementById("pickerScreen");
+
+    const mixScreen =
+        document.getElementById("mixScreen");
 
     const layoutScreen =
         document.getElementById("layoutScreen");
@@ -943,8 +1237,46 @@
     const rightHandle =
         document.getElementById("rightHandle");
 
-    // 🎒 Our "backpack" to hold the uploaded video file
+    const styleFullscreen =
+        document.getElementById("styleFullscreen");
+
+    const previewBox =
+        document.getElementById("previewBox");
+
+    const previewVideo =
+        document.getElementById("previewVideo");
+
+    const videoVolume =
+        document.getElementById("videoVolume");
+
+    const audioVolume =
+        document.getElementById("audioVolume");
+
+    const importAudioButton =
+        document.getElementById("importAudioButton");
+
+    const audioInput =
+        document.getElementById("audioInput");
+
+    const fullscreenButton =
+        document.getElementById("fullscreenButton");
+
+    const createFinalButton =
+        document.getElementById("createFinalButton");
+
+
+    /* ======================================
+       OUR TWO "BACKPACKS"
+    ====================================== */
+
+    // 🎒 The uploaded video file
     let uploadedFile = null;
+
+    // 🎒 The imported audio file
+    let importedAudioFile = null;
+
+    // 🔊 An invisible audio player for the preview
+    const previewAudio = new Audio();
 
 
     /* ======================================
@@ -955,6 +1287,8 @@
 
         homeScreen.classList.remove("active");
         editorScreen.classList.remove("active");
+        pickerScreen.classList.remove("active");
+        mixScreen.classList.remove("active");
         layoutScreen.classList.remove("active");
 
         screen.classList.add("active");
@@ -1048,7 +1382,6 @@
 
             try {
 
-                // 🔗 Now using your real API_URL instead of Replit!
                 const response =
                     await fetch(
                         `${API_URL}/api/prepare`,
@@ -1099,7 +1432,6 @@
                     result.end
                 );
 
-                // Clear uploaded file if they switch to YouTube
                 uploadedFile = null;
 
                 showScreen(editorScreen);
@@ -1165,7 +1497,6 @@
 
             if (!file) return;
 
-            // 🎒 Put the file in our backpack!
             uploadedFile = file;
 
             sessionStorage.removeItem(
@@ -1330,7 +1661,7 @@
 
 
     /* ======================================
-       CONTINUE (Send to Backend)
+       CONTINUE (trim, then go to picker)
     ====================================== */
 
     continueButton.addEventListener(
@@ -1368,45 +1699,93 @@
                 return;
             }
 
-            // 🚀 NEW CODE: If we have an uploaded file, send it to the backend!
+
             if (uploadedFile) {
-                continueButton.textContent = "Creating clip...";
+
+                continueButton.textContent =
+                    "Creating clip...";
+
                 continueButton.disabled = true;
 
+
                 try {
-                    // This is the virtual form (multipart/form-data)!
-                    const formData = new FormData();
-                    formData.append("video", uploadedFile);
-                    formData.append("start", start);
-                    formData.append("end", end);
 
-                    const response = await fetch(`${API_URL}/api/trim`, {
-                        method: "POST",
-                        body: formData
-                    });
+                    const formData =
+                        new FormData();
 
-                    const result = await response.json();
+                    formData.append(
+                        "video",
+                        uploadedFile
+                    );
+
+                    formData.append(
+                        "start",
+                        start
+                    );
+
+                    formData.append(
+                        "end",
+                        end
+                    );
+
+
+                    const response =
+                        await fetch(
+                            `${API_URL}/api/trim`,
+                            {
+                                method: "POST",
+                                body: formData
+                            }
+                        );
+
+
+                    const result =
+                        await response.json();
+
 
                     if (result.success) {
-                        alert("Clip created successfully! Downloading now...");
-                        // Go to the download page to get the video
-                        window.location.href = `${API_URL}/api/download`;
+
+                        // The clip now lives on the server.
+                        // Point the preview player at it,
+                        // then open the style picker.
+                        previewVideo.src =
+                            `${API_URL}/api/download`;
+
+                        showScreen(pickerScreen);
+
                     } else {
-                        alert("Error: " + (result.error || "Unknown error"));
+
+                        alert(
+                            "Error: " +
+                            (result.error ||
+                             "Unknown error")
+                        );
+
                     }
+
                 } catch (error) {
+
                     console.error(error);
-                    alert("Could not connect to the server.");
+
+                    alert(
+                        "Could not connect to the server."
+                    );
+
                 } finally {
-                    continueButton.textContent = "Continue";
+
+                    continueButton.textContent =
+                        "Continue";
+
                     continueButton.disabled = false;
+
                 }
-                
-                return; // Stop here, don't go to the layout screen yet
+
+                return;
+
             }
 
 
-            // Old code for YouTube URL (if no file was uploaded)
+            // YouTube path (for later)
             sessionStorage.setItem(
                 "clipStart",
                 start
@@ -1425,6 +1804,247 @@
 
 
     /* ======================================
+       STYLE PICKER
+    ====================================== */
+
+    styleFullscreen.addEventListener(
+        "click",
+        () => {
+
+            showScreen(mixScreen);
+
+        }
+    );
+
+
+    document
+        .querySelectorAll(".style-card.disabled")
+        .forEach(card => {
+
+            card.addEventListener(
+                "click",
+                () => {
+
+                    alert(
+                        "This style is coming soon!"
+                    );
+
+                }
+            );
+
+        });
+
+
+    /* ======================================
+       MIX SCREEN (STYLE A)
+    ====================================== */
+
+    importAudioButton.addEventListener(
+        "click",
+        () => {
+
+            audioInput.click();
+
+        }
+    );
+
+
+    audioInput.addEventListener(
+        "change",
+        () => {
+
+            const file =
+                audioInput.files[0];
+
+            if (!file) return;
+
+
+            importedAudioFile = file;
+
+            previewAudio.src =
+                URL.createObjectURL(file);
+
+            previewAudio.volume =
+                audioVolume.value;
+
+            importAudioButton.textContent =
+                "✓ " + file.name;
+
+        }
+    );
+
+
+    videoVolume.addEventListener(
+        "input",
+        () => {
+
+            previewVideo.volume =
+                videoVolume.value;
+
+        }
+    );
+
+
+    audioVolume.addEventListener(
+        "input",
+        () => {
+
+            previewAudio.volume =
+                audioVolume.value;
+
+        }
+    );
+
+
+    /* Keep the song in sync with the video */
+
+    previewVideo.addEventListener(
+        "play",
+        () => {
+
+            if (previewAudio.src) {
+                previewAudio.play();
+            }
+
+        }
+    );
+
+
+    previewVideo.addEventListener(
+        "pause",
+        () => {
+
+            previewAudio.pause();
+
+        }
+    );
+
+
+    previewVideo.addEventListener(
+        "ended",
+        () => {
+
+            previewAudio.pause();
+
+            previewAudio.currentTime = 0;
+
+        }
+    );
+
+
+    fullscreenButton.addEventListener(
+        "click",
+        () => {
+
+            if (previewBox.requestFullscreen) {
+                previewBox.requestFullscreen();
+            }
+
+        }
+    );
+
+
+    createFinalButton.addEventListener(
+        "click",
+        async () => {
+
+            if (!importedAudioFile) {
+
+                alert(
+                    "Please import an audio file first."
+                );
+
+                return;
+            }
+
+
+            createFinalButton.textContent =
+                "Baking your clip...";
+
+            createFinalButton.disabled = true;
+
+
+            try {
+
+                const formData =
+                    new FormData();
+
+                formData.append(
+                    "mode",
+                    "fullscreen"
+                );
+
+                formData.append(
+                    "audio",
+                    importedAudioFile
+                );
+
+                formData.append(
+                    "video_volume",
+                    videoVolume.value
+                );
+
+                formData.append(
+                    "audio_volume",
+                    audioVolume.value
+                );
+
+
+                const response =
+                    await fetch(
+                        `${API_URL}/api/render`,
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+
+
+                const result =
+                    await response.json();
+
+
+                if (result.success) {
+
+                    alert(
+                        "Final clip ready! Downloading now..."
+                    );
+
+                    window.location.href =
+                        `${API_URL}/api/download-final`;
+
+                } else {
+
+                    alert(
+                        "Error: " +
+                        (result.error ||
+                         "Unknown error")
+                    );
+
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Could not connect to the server."
+                );
+
+            } finally {
+
+                createFinalButton.textContent =
+                    "Create final clip";
+
+                createFinalButton.disabled = false;
+
+            }
+
+        }
+    );
+
+
+    /* ======================================
        BACK
     ====================================== */
 
@@ -1433,29 +2053,30 @@
         () => {
 
             if (
-                layoutScreen.classList.contains(
-                    "active"
-                )
+                layoutScreen.classList.contains("active")
             ) {
-
-                showScreen(
-                    editorScreen
-                );
-
+                showScreen(editorScreen);
                 return;
             }
 
+            if (
+                mixScreen.classList.contains("active")
+            ) {
+                showScreen(pickerScreen);
+                return;
+            }
 
             if (
-                editorScreen.classList.contains(
-                    "active"
-                )
+                pickerScreen.classList.contains("active")
             ) {
+                showScreen(editorScreen);
+                return;
+            }
 
-                showScreen(
-                    homeScreen
-                );
-
+            if (
+                editorScreen.classList.contains("active")
+            ) {
+                showScreen(homeScreen);
                 return;
             }
 
