@@ -1,3 +1,4 @@
+from fastapi.responses import FileResponse
 import subprocess
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
@@ -151,3 +152,12 @@ async def trim_video(
             "error": "FFmpeg failed.",
             "details": error.stderr[-1000:]
         }
+
+
+@app.get("/api/download")
+def download_clip():
+    return FileResponse(
+        "backend/temp/clip-from-api.mp4",
+        media_type="video/mp4",
+        filename="clip.mp4"
+    )
