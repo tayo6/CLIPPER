@@ -22,7 +22,7 @@ app.add_middleware(
 def home():
     return {
         "status": "online",
-        "message": "Clipper backend is running"
+        "message": "Ad3, new code is running"
     }
 
 
