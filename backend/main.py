@@ -1,5 +1,5 @@
 import subprocess
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
@@ -70,13 +70,17 @@ def prepare_video(data: dict):
 
 
 @app.post("/api/trim")
-def trim_video(data: dict):
+async def trim_video(
+    video: UploadFile = File(...),
+    start: float = Form(...),
+    end: float = Form(...)
+):
+    import os
 
-    input_file = "backend/temp/test.mp4"
+    input_file = "backend/temp/input.mp4"
     output_file = "backend/temp/clip-from-api.mp4"
 
-    start = float(data.get("start", 0))
-    end = float(data.get("end", 0))
+    os.makedirs("backend/temp", exist_ok=True)
 
     duration = end - start
 
@@ -92,18 +96,22 @@ def trim_video(data: dict):
             "error": "Maximum clip length is 90 seconds."
         }
 
-    command = [
-        "ffmpeg",
-        "-y",
-        "-ss", str(start),
-        "-i", input_file,
-        "-t", str(duration),
-        "-c:v", "libx264",
-        "-c:a", "aac",
-        output_file
-    ]
-
     try:
+        video_data = await video.read()
+
+        with open(input_file, "wb") as file:
+            file.write(video_data)
+
+        command = [
+            "ffmpeg",
+            "-y",
+            "-ss", str(start),
+            "-i", input_file,
+            "-t", str(duration),
+            "-c:v", "libx264",
+            "-c:a", "aac",
+            output_file
+        ]
 
         subprocess.run(
             command,
@@ -122,7 +130,6 @@ def trim_video(data: dict):
         }
 
     except subprocess.CalledProcessError as error:
-
         return {
             "success": False,
             "error": "FFmpeg failed.",
