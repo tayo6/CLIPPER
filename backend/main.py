@@ -1,15 +1,42 @@
-from fastapi.responses import FileResponse
+import os
 import subprocess
-from fastapi import FastAPI, UploadFile, File, Form
+
+from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+
 
 app = FastAPI(
     title="Clipper API",
     version="1.0.1"
 )
 
-# Allow our frontend to communicate with the backend.
-# During development we keep this open.
+
+# --------------------------------------------------
+# Paths
+# --------------------------------------------------
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+TEMP_DIR = os.path.join(BASE_DIR, "temp")
+
+INPUT_FILE = os.path.join(
+    TEMP_DIR,
+    "input.mp4"
+)
+
+CLIP_FILE = os.path.join(
+    TEMP_DIR,
+    "clip-from-api.mp4"
+)
+
+
+os.makedirs(TEMP_DIR, exist_ok=True)
+
+
+# --------------------------------------------------
+# CORS
+# --------------------------------------------------
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -19,6 +46,10 @@ app.add_middleware(
 )
 
 
+# --------------------------------------------------
+# Home / health check
+# --------------------------------------------------
+
 @app.get("/")
 def home():
     return {
@@ -26,6 +57,10 @@ def home():
         "message": "Ad3, new code is running"
     }
 
+
+# --------------------------------------------------
+# Prepare YouTube video
+# --------------------------------------------------
 
 @app.post("/api/prepare")
 def prepare_video(data: dict):
@@ -70,18 +105,16 @@ def prepare_video(data: dict):
     }
 
 
+# --------------------------------------------------
+# Trim uploaded video
+# --------------------------------------------------
+
 @app.post("/api/trim")
 async def trim_video(
     video: UploadFile = File(...),
     start: float = Form(...),
     end: float = Form(...)
 ):
-    import os
-
-    input_file = "backend/temp/input.mp4"
-    output_file = "backend/temp/clip-from-api.mp4"
-
-    os.makedirs("backend/temp", exist_ok=True)
 
     duration = end - start
 
@@ -98,36 +131,39 @@ async def trim_video(
         }
 
     try:
+
+        # Read the uploaded file ONCE.
         video_data = await video.read()
 
-        with open(input_file, "wb") as file:
+        if not video_data:
+            return {
+                "success": False,
+                "error": "The uploaded video is empty."
+            }
+
+        # Save uploaded video.
+        with open(INPUT_FILE, "wb") as file:
             file.write(video_data)
 
+        # Remove an old clip if one exists.
+        if os.path.exists(CLIP_FILE):
+            os.remove(CLIP_FILE)
+
+        # Create the trimmed clip with FFmpeg.
         command = [
             "ffmpeg",
             "-y",
-            "-ss", str(start),
-            "-i", input_file,
-            "-t", str(duration),
-            "-c:v", "libx264",
-            "-c:a", "aac",
-            output_file
-        ]
-
-        video_data = await video.read()
-
-        with open(input_file, "wb") as file:
-            file.write(video_data)
-
-        command = [
-            "ffmpeg",
-            "-y",
-            "-ss", str(start),
-            "-i", input_file,
-            "-t", str(duration),
-            "-c:v", "libx264",
-            "-c:a", "aac",
-            output_file
+            "-ss",
+            str(start),
+            "-i",
+            INPUT_FILE,
+            "-t",
+            str(duration),
+            "-c:v",
+            "libx264",
+            "-c:a",
+            "aac",
+            CLIP_FILE
         ]
 
         subprocess.run(
@@ -140,24 +176,44 @@ async def trim_video(
         return {
             "success": True,
             "message": "Clip created successfully.",
-            "file": output_file,
+            "file": CLIP_FILE,
             "start": start,
             "end": end,
             "duration": duration
         }
 
     except subprocess.CalledProcessError as error:
+
         return {
             "success": False,
             "error": "FFmpeg failed.",
             "details": error.stderr[-1000:]
         }
 
+    except Exception as error:
+
+        return {
+            "success": False,
+            "error": "An unexpected error occurred.",
+            "details": str(error)
+        }
+
+
+# --------------------------------------------------
+# Download trimmed clip
+# --------------------------------------------------
 
 @app.get("/api/download")
 def download_clip():
+
+    if not os.path.exists(CLIP_FILE):
+        return {
+            "success": False,
+            "error": "No trimmed clip is available."
+        }
+
     return FileResponse(
-        "backend/temp/clip-from-api.mp4",
+        CLIP_FILE,
         media_type="video/mp4",
         filename="clip.mp4"
     )
